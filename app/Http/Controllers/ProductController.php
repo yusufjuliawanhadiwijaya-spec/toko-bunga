@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\product;
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //tampilkan product
-        $product = \App\Models\product::all();
-        return view('products.index',compact('products'));
-    }
+{
+    $products = product::all();  // fix: $product → $products
+    return view('products.index', compact('products'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -28,10 +27,18 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-    }
+{
+    $request->validate([
+        'nama_barang' => 'required',
+        'harga' => 'required|numeric',
+        'stok' => 'required|numeric',
+        'deskripsi' => 'required'
+    ]);
 
+    product::create($request->all());
+    
+    return redirect()->route('products.index')->with('success', 'barang berhasil ditambahkan');
+}
     /**
      * Display the specified resource.
      */
